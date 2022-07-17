@@ -1,6 +1,8 @@
 package github.josedoce.anotador.views.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.database.DBAnnotations;
@@ -22,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,13 +62,13 @@ public class AnnotationsFragment extends Fragment {
         }
 
         //adapter
-        AnnotationsAdapter adapter = new AnnotationsAdapter(annotationList);
+        AnnotationsAdapter adapter = new AnnotationsAdapter(annotationList, getContext());
         mViewHolder.rv_annotations_list.setAdapter(adapter);
 
         //layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(F.getContext());
         mViewHolder.rv_annotations_list.setLayoutManager(layoutManager);
-        mViewHolder.tv_annotation_total.setText(String.format("%d anotações no total", annotationList.size()));
+        mViewHolder.tv_annotation_total.setText(format("%d anotações no total", annotationList.size()));
         return F;
     }
 
@@ -83,7 +87,7 @@ public class AnnotationsFragment extends Fragment {
                 tv_date,
                 tv_hour
         ;
-        public CustomViewHolder(@NonNull View itemView) {
+        public CustomViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
             tv_annotation = itemView.findViewById(R.id.tv_title);
             tv_description = itemView.findViewById(R.id.tv_description);
@@ -92,33 +96,54 @@ public class AnnotationsFragment extends Fragment {
             tv_url = itemView.findViewById(R.id.tv_url);
             tv_date = itemView.findViewById(R.id.tv_date);
             tv_hour = itemView.findViewById(R.id.tv_hour);
+
+            tv_email.setOnClickListener(view->copyText(tv_email, context));
+            tv_password.setOnClickListener(view->copyText(tv_password, context));
+            tv_url.setOnClickListener(view->copyText(tv_url, context));
         }
 
         public void bindData(Annotation annotation) {
             tv_annotation.setText(annotation.getTitle());
             tv_description.setText(annotation.getDescription());
+
             tv_email.setText(annotation.getEmail());
             tv_password.setText(annotation.getPassword());
             tv_url.setText(annotation.getUrl());
-            tv_date.setText(annotation.getDate()+" - ");
+
+            tv_date.setText(format("%s - ",annotation.getDate()));
             tv_hour.setText(annotation.getHour());
+        }
+
+        private void copyText(TextView textView, Context context){
+            String text = textView.getText().toString();
+            if(!text.isEmpty()){
+                ClipboardManager clipboardManager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("key", text);
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(context, "Copiado!", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(context, "Não foi possivel copiar.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
     private static class AnnotationsAdapter extends RecyclerView.Adapter<CustomViewHolder> {
         private final List<Annotation> annotationList;
+        private final Context context;
 
-        public AnnotationsAdapter(List<Annotation> annotationList){
+        public AnnotationsAdapter(List<Annotation> annotationList, Context ctx){
             this.annotationList = annotationList;
+            this.context = ctx;
         }
 
         @NonNull
         @Override
         public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             Context context = parent.getContext();
+
             LayoutInflater inflater = LayoutInflater.from(context);
             View viewAnnotations = inflater.inflate(R.layout.row_annotation, parent,false);
-            return new CustomViewHolder(viewAnnotations);
+            return new CustomViewHolder(viewAnnotations, context);
         }
 
         @Override
