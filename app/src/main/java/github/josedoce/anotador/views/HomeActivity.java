@@ -35,6 +35,13 @@ public class HomeActivity extends AppCompatActivity {
         mViewHolder.bnv_menu_home.setOnItemSelectedListener(this::switchFraments);
     }
 
+    @Override
+    public void onBackPressed() {
+        finishAffinity();
+        System.exit(0);
+    }
+
+
     private void defaultFragment(Fragment fragment){
         fragmentManager(fragment);
     }
