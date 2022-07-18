@@ -3,18 +3,33 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable-v24/round_content_card.xml" value="0.3675" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/background.xml" value="0.183" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/bottom_navigation_selector.xml" value="0.135" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/closed_eye.xml" value="0.3675" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_add_24.xml" value="0.135" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_baseline_content_copy_24.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_baseline_remove_red_eye_24.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_baseline_save_24.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_close_eye_24.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3675" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_menu_add_24.xml" value="0.135" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_menu_list_24.xml" value="0.135" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_menu_playlist_add_24.xml" value="0.3675" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_menu_settings_24.xml" value="0.3675" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ic_settings_24.xml" value="0.135" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/open_eye.xml" value="0.3665" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/round_card.xml" value="0.3665" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/round_default_content_card.xml" value="0.3665" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/round_edit_text.xml" value="0.183" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/drawable/ss.xml" value="0.3665" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/add_fragment_layout.xml" value="0.1" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/annotations_fragment_layout.xml" value="0.33" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/home_layout.xml" value="0.33" />
-        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/row_annotation.xml" value="0.1" />
+        <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/row_annotation.xml" value="0.67" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/setting_fragment_layout.xml" value="0.22" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/setting_layout.xml" value="0.18" />
         <entry key="..\:/Users/JoseNervoso/AndroidStudioProjects/Anotador/app/src/main/res/layout/signin_layout.xml" value="0.21994535519125682" />

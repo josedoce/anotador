@@ -20,7 +20,8 @@ public class DBAnnotations {
         values.put("title", annotation.getTitle());
         values.put("description", annotation.getDescription());
         values.put("email", annotation.getEmail());
-        values.put("password", annotation.getUrl());
+        values.put("password", annotation.getPassword());
+        values.put("url", annotation.getUrl());
         values.put("date", annotation.getDate()+","+annotation.getHour());
         return db.insert(TB_NAME, null, values);
     }
