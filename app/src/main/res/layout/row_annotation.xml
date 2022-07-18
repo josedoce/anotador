@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
@@ -14,6 +15,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/tv_title"
+            android:textSize="22sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Titulo" />
@@ -41,14 +43,15 @@
     </RelativeLayout>
 
     <TextView
-        android:layout_marginTop="4dp"
         android:id="@+id/tv_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_header"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
-        android:padding="4dp"
+        android:textSize="19sp"
         android:background="@drawable/round_default_content_card"
+        android:padding="4dp"
         android:text="Descrição" />
 
     <TextView
@@ -57,27 +60,49 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_description"
         android:padding="4dp"
+        android:textSize="18sp"
         android:background="@drawable/round_content_card"
         android:layout_marginTop="4dp"
         android:text="Email" />
 
-    <TextView
-        android:id="@+id/tv_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_email"
-        android:padding="4dp"
-        android:background="@drawable/round_content_card"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:id="@+id/ll_password"
         android:layout_marginTop="4dp"
-        android:text="Senha" />
+        android:layout_below="@id/tv_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/tv_password"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="11"
+            android:background="@drawable/round_content_card"
+            android:padding="4dp"
+            android:text="Senha"
+            android:focusable="false"
+            android:inputType="textPassword"
+            android:textSize="18sp"
+            />
+        <ImageButton
+            android:backgroundTint="#00000000"
+            android:id="@+id/bt_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_open_eye_24"
+            />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_password"
-        android:padding="4dp"
-        android:background="@drawable/round_content_card"
+        android:layout_below="@+id/ll_password"
         android:layout_marginTop="4dp"
-        android:text="Link" />
+        android:background="@drawable/round_content_card"
+        android:padding="4dp"
+        android:text="Link"
+        android:textSize="18sp" />
 </RelativeLayout>

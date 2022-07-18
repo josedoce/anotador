@@ -18,7 +18,9 @@ No momento, só cria, futuramente pretendo colocar mais opções.
 
 
 ### (Básico) Ainda falta:
-
+- [x] Melhor visual do Card de anotação<br>
+- [x] Função de esconder e exibir senha<br>
+- [ ] Modo Dioguardo - função de guardar no diretorio as anotações.
 - [ ] Encriptação de dados da anotação<br>
 - [ ] Descriptação de dados da anotação<br>
 - [ ] Deleção precisa de anotações<br>

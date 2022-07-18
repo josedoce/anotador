@@ -6,9 +6,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,15 +84,18 @@ public class AnnotationsFragment extends Fragment {
     }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
+        private final EditText tv_password;
+        private final ImageButton bt_show;
+        private static boolean isPasswordShown = false;
         private final TextView
                 tv_annotation,
                 tv_description,
                 tv_email,
-                tv_password,
                 tv_url,
                 tv_date,
                 tv_hour
         ;
+
         public CustomViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
             tv_annotation = itemView.findViewById(R.id.tv_title);
@@ -96,10 +105,24 @@ public class AnnotationsFragment extends Fragment {
             tv_url = itemView.findViewById(R.id.tv_url);
             tv_date = itemView.findViewById(R.id.tv_date);
             tv_hour = itemView.findViewById(R.id.tv_hour);
+            bt_show = itemView.findViewById(R.id.bt_show);
 
             tv_email.setOnClickListener(view->copyText(tv_email, context));
             tv_password.setOnClickListener(view->copyText(tv_password, context));
             tv_url.setOnClickListener(view->copyText(tv_url, context));
+
+            bt_show.setOnClickListener((view)->{
+                if(!isPasswordShown){
+                    tv_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    bt_show.setImageResource(R.drawable.ic_close_eye_24);
+                    isPasswordShown = true;
+                }else{
+                    tv_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    bt_show.setImageResource(R.drawable.ic_open_eye_24);
+                    isPasswordShown = false;
+                }
+            });
+
         }
 
         public void bindData(Annotation annotation) {
