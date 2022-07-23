@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
         mViewHolder.fl_framelayout_home = findViewById(R.id.fl_framelayout_home);
         mViewHolder.bnv_menu_home = findViewById(R.id.bnv_menu_home);
 
-        defaultFragment(new AnnotationsFragment(mViewHolder.bnv_menu_home));
+        defaultFragment(new AnnotationsFragment(mViewHolder.bnv_menu_home, getSupportFragmentManager()));
         mViewHolder.bnv_menu_home.setOnItemSelectedListener(this::switchFraments);
     }
 
@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         Fragment selectedFragment = null;
         switch (item.getItemId()){
             case R.id.ic_annotations:
-                selectedFragment = new AnnotationsFragment(mViewHolder.bnv_menu_home);
+                selectedFragment = new AnnotationsFragment(mViewHolder.bnv_menu_home, getSupportFragmentManager());
                 break;
             case R.id.ic_add:
                 selectedFragment = new AddFragment(mViewHolder.bnv_menu_home);

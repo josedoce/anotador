@@ -31,4 +31,8 @@ public class DBAnnotations {
         return db.rawQuery("SELECT * FROM "+TB_NAME, null);
     }
 
+    public long delete(Integer id) {
+        SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+        return db.delete(TB_NAME, "id=?",new String[]{id.toString()});
+    }
 }
