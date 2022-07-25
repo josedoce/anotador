@@ -6,7 +6,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
@@ -41,7 +43,9 @@ import java.util.List;
 public class AnnotationsFragment extends Fragment {
     private FragmentManager fragmentManager;
     private static BottomNavigationView bottomNavigationView;
-
+    private AnnotationsAdapter adapter;
+    private List<Annotation> annotationListOriginalCopy = new ArrayList<>();
+    private List<Annotation> annotationList;
     private DBHelper db;
     private final ViewHolder mViewHolder = new ViewHolder();
 
@@ -50,7 +54,7 @@ public class AnnotationsFragment extends Fragment {
         this.fragmentManager = fragmentManager;
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint({"DefaultLocale"})
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,7 +62,11 @@ public class AnnotationsFragment extends Fragment {
         View F = inflater.inflate(R.layout.annotations_fragment_layout, container, false);
         mViewHolder.rv_annotations_list = F.findViewById(R.id.rv_annotations_list);
         mViewHolder.tv_annotation_total = F.findViewById(R.id.tv_annotation_total);
-        List<Annotation> annotationList = new ArrayList<>();
+        mViewHolder.ib_search_btn = F.findViewById(R.id.ib_search_btn);
+        mViewHolder.et_search = F.findViewById(R.id.et_search);
+
+        annotationList = new ArrayList<>();
+
 
         db = new DBHelper(getContext());
         DBAnnotations dbAnnotations = new DBAnnotations(db);
@@ -71,21 +79,90 @@ public class AnnotationsFragment extends Fragment {
                 annotationList.add(annotation);
             }while(cursor.moveToNext());
         }
+        annotationListOriginalCopy.addAll(annotationList);
+
 
         //adapter
-        AnnotationsAdapter adapter = new AnnotationsAdapter(annotationList, getContext(), fragmentManager);
+        adapter = new AnnotationsAdapter(annotationList, getContext(), fragmentManager);
         mViewHolder.rv_annotations_list.setAdapter(adapter);
 
         //layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(F.getContext());
         mViewHolder.rv_annotations_list.setLayoutManager(layoutManager);
-        mViewHolder.tv_annotation_total.setText(format("%d anotações no total", annotationList.size()));
+        updateTotal();
+
+        //search
+        mViewHolder.et_search.setOnFocusChangeListener((v, hasFocus) -> {
+            if(!hasFocus && mViewHolder.et_search.getText().toString().isEmpty()){
+                mViewHolder.ib_search_btn.setVisibility(View.GONE);
+            }else{
+                mViewHolder.ib_search_btn.setVisibility(View.VISIBLE);
+            }
+        });
+        mViewHolder.et_search.addTextChangedListener(new CustomTextWatcher(this));
+
+        mViewHolder.ib_search_btn.setOnClickListener((view)->{
+            mViewHolder.et_search.getText().clear();
+            search();
+        });
         return F;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void search(){
+        String search = mViewHolder.et_search.getText().toString();
+
+        if(search.isEmpty()){
+            annotationList.clear();
+            annotationList.addAll(annotationListOriginalCopy);
+            adapter.notifyDataSetChanged();
+            updateTotal();
+            return;
+        }
+        int annotationsSize = annotationListOriginalCopy.size();
+        annotationList.clear();
+        if(annotationsSize > 0){
+            for(int i = 0; i < annotationsSize; i++){
+                if(annotationListOriginalCopy.get(i).getTitle().contains(search)){
+                    annotationList.add(annotationListOriginalCopy.get(i));
+                }
+            }
+
+            //https://www.tutorialspoint.com/how-to-update-recyclerview-adapter-data-in-android
+            adapter.notifyDataSetChanged();
+            updateTotal();
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void updateTotal(){
+        mViewHolder.tv_annotation_total.setText(format("%d anotações no total", annotationList.size()));
+    }
+
+    private static class CustomTextWatcher implements TextWatcher {
+
+        private AnnotationsFragment annotationsFragment;
+        public CustomTextWatcher(AnnotationsFragment annotationsFragment){
+            this.annotationsFragment = annotationsFragment;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            annotationsFragment.search();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
     }
 
     private static class ViewHolder {
         RecyclerView rv_annotations_list;
         TextView tv_annotation_total;
+        ImageButton ib_search_btn;
+        EditText et_search;
     }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {

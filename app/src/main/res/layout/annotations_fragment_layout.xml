@@ -10,12 +10,39 @@
         android:text="Anotações"
         android:textAlignment="center"
         android:textSize="30sp" />
-
+    <RelativeLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:id="@+id/rl_search"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_below="@+id/tv_fragment_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:padding="4dp"
+            android:background="@drawable/round_default_content_card"
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@+id/ib_search_btn"
+            android:hint="Receitas de bolo"/>
+        <ImageButton
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:id="@+id/ib_search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FDFCFC"
+            android:src="@drawable/ic_close_24"/>
+    </RelativeLayout>
     <TextView
         android:id="@+id/tv_annotation_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_fragment_title"
+        android:layout_below="@+id/rl_search"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
         android:text="20 anotações no total"
@@ -23,9 +50,9 @@
         android:textSize="10sp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:padding="8dp"
-        android:layout_below="@+id/tv_annotation_total"
         android:id="@+id/rv_annotations_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_annotation_total"
+        android:padding="8dp" />
 </RelativeLayout>
