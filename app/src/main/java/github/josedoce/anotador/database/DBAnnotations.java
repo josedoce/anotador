@@ -35,4 +35,22 @@ public class DBAnnotations {
         SQLiteDatabase db = this.dbHelper.getWritableDatabase();
         return db.delete(TB_NAME, "id=?",new String[]{id.toString()});
     }
+
+    public long update(Annotation annotation) {
+        SQLiteDatabase db = this.dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("title", annotation.getTitle());
+        values.put("description", annotation.getDescription());
+        values.put("email", annotation.getEmail());
+        values.put("password", annotation.getPassword());
+        values.put("url", annotation.getUrl());
+        values.put("date", annotation.getDate()+","+annotation.getHour());
+
+        return db.update(TB_NAME, values, "id=?",new String[]{annotation.getId().toString()});
+    }
+
+    public Cursor selectById(Integer id) {
+        SQLiteDatabase db = this.dbHelper.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM "+TB_NAME+" WHERE id=?", new String[]{id.toString()});
+    }
 }

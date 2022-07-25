@@ -1,5 +1,7 @@
 package github.josedoce.anotador.views.fragments;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,6 +27,8 @@ import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.model.Annotation;
 
 public class AddFragment extends Fragment {
+    private String status = "create";
+    private int id;
     private DBHelper db;
     private DBAnnotations dbAnnotations;
     private ViewHolder mViewHolder = new ViewHolder();
@@ -45,6 +50,7 @@ public class AddFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View F = inflater.inflate(R.layout.add_fragment_layout, container, false);
+
         db = new DBHelper(getContext());
         dbAnnotations = new DBAnnotations(db);
 
@@ -62,6 +68,24 @@ public class AddFragment extends Fragment {
         mViewHolder.et_email = F.findViewById(R.id.et_email);
         mViewHolder.et_password = F.findViewById(R.id.et_password);
         mViewHolder.et_url = F.findViewById(R.id.et_url);
+
+        //update logic
+        if(getArguments() != null){
+            status = getArguments().getString("status");
+            id = Integer.parseInt(getArguments().getString("id"));
+            Cursor cursor = dbAnnotations.selectById(id);
+            cursor.moveToFirst();
+            Annotation annotation = new Annotation(cursor);
+
+            mViewHolder.bt_create.setText("editar");
+            setText(mViewHolder.et_title, annotation.getTitle());
+            setText(mViewHolder.et_description, annotation.getDescription());
+            setText(mViewHolder.et_email, annotation.getEmail());
+            setText(mViewHolder.et_password, annotation.getPassword());
+            setText(mViewHolder.et_url, annotation.getUrl());
+        }else{
+            mViewHolder.bt_create.setText("criar");
+        }
 
         //cancel
         mViewHolder.bt_cancel.setOnClickListener((view)->{
@@ -93,11 +117,35 @@ public class AddFragment extends Fragment {
                     vdate,
                     vhour
             );
-            dbAnnotations.create(annotation);
-            Toast.makeText(getContext(), "Salvo com sucesso.", Toast.LENGTH_LONG).show();
-            bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
+            if(status.equals("create")){
+                dbAnnotations.create(annotation);
+                Toast.makeText(getContext(), "Salvo com sucesso.", Toast.LENGTH_LONG).show();
+                bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
+            }
+            if(status.equals("edit")){
+                annotation.setId(id);
+                showDeleteDialogActions(annotation);
+            }
         });
         return F;
+    }
+
+    private void showDeleteDialogActions(Annotation annotation){
+        Context context = requireContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder
+                .setMessage("Deseja editar esta anotação ?")
+                .setPositiveButton("sim", (dialog, which) -> {
+                    long res = dbAnnotations.update(annotation);;
+                    if(res != 0){
+                        Toast.makeText(getContext(), "Editado com sucesso.", Toast.LENGTH_LONG).show();
+                        bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
+                    }else{
+                        Toast.makeText(context, "Não foi editado!", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("não",((dialog, which) -> {}));
+        builder.show();
     }
 
     public boolean isValid(EditText[] ets){
@@ -117,6 +165,10 @@ public class AddFragment extends Fragment {
 
     public String getText(EditText et){
         return et.getText().toString();
+    }
+
+    public void setText(EditText et, String value){
+        et.setText(value);
     }
 
     public static class ViewHolder {
