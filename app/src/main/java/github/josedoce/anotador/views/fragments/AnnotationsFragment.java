@@ -95,7 +95,7 @@ public class AnnotationsFragment extends Fragment {
         private Annotation annotation;
         private final FragmentManager fragmentManager;
         private final EditText tv_password;
-        private final ImageButton bt_show, ib_delete;
+        private final ImageButton bt_show, ib_delete, ib_edite;
         private static boolean isPasswordShown = false;
         private final TextView
                 tv_annotation,
@@ -121,15 +121,32 @@ public class AnnotationsFragment extends Fragment {
             tv_hour = itemView.findViewById(R.id.tv_hour);
             bt_show = itemView.findViewById(R.id.bt_show);
             ib_delete = itemView.findViewById(R.id.ib_delete);
+            ib_edite = itemView.findViewById(R.id.ib_edite);
 
             tv_email.setOnClickListener(view->copyText(tv_email, context));
             tv_password.setOnClickListener(view->copyText(tv_password, context));
             tv_url.setOnClickListener(view->copyText(tv_url, context));
 
             ib_delete.setOnClickListener(this::showDeleteDialogActions);
+            ib_edite.setOnClickListener(this::editItem);
             bt_show.setOnClickListener(this::showAndHidePassword);
 
+
         }
+
+        private void editItem(View view) {
+            Bundle bundle = new Bundle();
+            bundle.putString("status","edit");
+            bundle.putString("id", annotation.getId().toString());
+            bottomNavigationView.setSelectedItemId(R.id.ic_add);
+            AddFragment addFragment = new AddFragment(bottomNavigationView);
+            addFragment.setArguments(bundle);
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fl_framelayout_home, addFragment)
+                    .commit();
+        }
+
         private void showDeleteDialogActions(View view){
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder

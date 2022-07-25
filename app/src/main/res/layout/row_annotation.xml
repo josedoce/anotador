@@ -32,10 +32,20 @@
             android:id="@+id/tv_hour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/ib_delete"
+            android:layout_toStartOf="@id/ib_edite"
             android:layout_centerInParent="true"
             android:text="Horas" />
 
+
+        <ImageButton
+            android:contentDescription="Editar anotação"
+            android:backgroundTint="#A46BF10B"
+            android:id="@+id/ib_edite"
+            android:layout_toStartOf="@id/ib_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit_24"
+            />
         <ImageButton
             android:contentDescription="Excluir anotação"
             android:backgroundTint="#A4F10B0B"
