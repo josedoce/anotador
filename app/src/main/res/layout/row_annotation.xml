@@ -25,28 +25,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/tv_hour"
+            android:layout_centerInParent="true"
             android:text="Data" />
 
         <TextView
-            android:layout_alignParentRight="true"
             android:id="@+id/tv_hour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Horas"
+            android:layout_toStartOf="@id/ib_delete"
+            android:layout_centerInParent="true"
+            android:text="Horas" />
+
+        <ImageButton
+            android:contentDescription="Excluir anotação"
+            android:backgroundTint="#A4F10B0B"
+            android:id="@+id/ib_delete"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete_forever_24"
             />
-        <com.google.android.material.divider.MaterialDivider
-            app:dividerColor="#0FFFFFFF"
-            android:layout_marginTop="4dp"
-            android:layout_below="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+
     </RelativeLayout>
 
+    <com.google.android.material.divider.MaterialDivider
+        app:dividerColor="#0FFFFFFF"
+        android:id="@+id/divider_1"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/rl_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/tv_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_header"
+        android:layout_below="@+id/divider_1"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:textSize="19sp"

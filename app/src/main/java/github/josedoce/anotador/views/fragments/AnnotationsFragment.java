@@ -25,7 +25,10 @@ import github.josedoce.anotador.model.Annotation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,27 +39,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnnotationsFragment extends Fragment {
+    private FragmentManager fragmentManager;
+    private static BottomNavigationView bottomNavigationView;
 
-    private BottomNavigationView bottomNavigationView;
     private DBHelper db;
-    private DBAnnotations dbAnnotations;
     private final ViewHolder mViewHolder = new ViewHolder();
 
-    public AnnotationsFragment(BottomNavigationView bnv){
-        this.bottomNavigationView = bnv;
+    public AnnotationsFragment(BottomNavigationView bnv, FragmentManager fragmentManager){
+        bottomNavigationView = bnv;
+        this.fragmentManager = fragmentManager;
     }
 
     @SuppressLint("DefaultLocale")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View F = inflater.inflate(R.layout.annotations_fragment_layout, container, false);
         mViewHolder.rv_annotations_list = F.findViewById(R.id.rv_annotations_list);
         mViewHolder.tv_annotation_total = F.findViewById(R.id.tv_annotation_total);
         List<Annotation> annotationList = new ArrayList<>();
 
         db = new DBHelper(getContext());
-        dbAnnotations = new DBAnnotations(db);
+        DBAnnotations dbAnnotations = new DBAnnotations(db);
 
         Cursor cursor = dbAnnotations.selectAll();
         cursor.moveToFirst();
@@ -68,7 +73,7 @@ public class AnnotationsFragment extends Fragment {
         }
 
         //adapter
-        AnnotationsAdapter adapter = new AnnotationsAdapter(annotationList, getContext());
+        AnnotationsAdapter adapter = new AnnotationsAdapter(annotationList, getContext(), fragmentManager);
         mViewHolder.rv_annotations_list.setAdapter(adapter);
 
         //layout
@@ -84,8 +89,13 @@ public class AnnotationsFragment extends Fragment {
     }
 
     private static class CustomViewHolder extends RecyclerView.ViewHolder {
+        private DBHelper db;
+        private DBAnnotations dbAnnotations;
+        private final Context context;
+        private Annotation annotation;
+        private final FragmentManager fragmentManager;
         private final EditText tv_password;
-        private final ImageButton bt_show;
+        private final ImageButton bt_show, ib_delete;
         private static boolean isPasswordShown = false;
         private final TextView
                 tv_annotation,
@@ -96,8 +106,12 @@ public class AnnotationsFragment extends Fragment {
                 tv_hour
         ;
 
-        public CustomViewHolder(@NonNull View itemView, Context context) {
+        public CustomViewHolder(@NonNull View itemView, Context context, FragmentManager fragmentManager) {
             super(itemView);
+            this.context = context;
+            this.fragmentManager = fragmentManager;
+            this.db = new DBHelper(context);
+            this.dbAnnotations = new DBAnnotations(db);
             tv_annotation = itemView.findViewById(R.id.tv_title);
             tv_description = itemView.findViewById(R.id.tv_description);
             tv_email = itemView.findViewById(R.id.tv_email);
@@ -106,26 +120,49 @@ public class AnnotationsFragment extends Fragment {
             tv_date = itemView.findViewById(R.id.tv_date);
             tv_hour = itemView.findViewById(R.id.tv_hour);
             bt_show = itemView.findViewById(R.id.bt_show);
+            ib_delete = itemView.findViewById(R.id.ib_delete);
 
             tv_email.setOnClickListener(view->copyText(tv_email, context));
             tv_password.setOnClickListener(view->copyText(tv_password, context));
             tv_url.setOnClickListener(view->copyText(tv_url, context));
 
-            bt_show.setOnClickListener((view)->{
-                if(!isPasswordShown){
-                    tv_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    bt_show.setImageResource(R.drawable.ic_close_eye_24);
-                    isPasswordShown = true;
-                }else{
-                    tv_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    bt_show.setImageResource(R.drawable.ic_open_eye_24);
-                    isPasswordShown = false;
-                }
-            });
+            ib_delete.setOnClickListener(this::showDeleteDialogActions);
+            bt_show.setOnClickListener(this::showAndHidePassword);
 
+        }
+        private void showDeleteDialogActions(View view){
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            builder
+                    .setMessage("Deseja mesmo excluir anotação ?")
+                    .setPositiveButton("sim", (dialog, which) -> {
+                        long res = dbAnnotations.delete(annotation.getId());
+                        if(res!=0){
+                            Toast.makeText(view.getContext(), "Excluido!", Toast.LENGTH_SHORT).show();
+                            AnnotationsFragment.bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
+                        }else{
+                            Toast.makeText(view.getContext(), "Não foi excluido!", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("não",((dialog, which) -> {
+
+                    }));
+            builder.show();
+        }
+
+        private void showAndHidePassword(View view){
+            if(!isPasswordShown){
+                tv_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                bt_show.setImageResource(R.drawable.ic_close_eye_24);
+                isPasswordShown = true;
+            }else{
+                tv_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                bt_show.setImageResource(R.drawable.ic_open_eye_24);
+                isPasswordShown = false;
+            }
         }
 
         public void bindData(Annotation annotation) {
+            this.annotation = annotation;
             tv_annotation.setText(annotation.getTitle());
             tv_description.setText(annotation.getDescription());
 
@@ -153,10 +190,12 @@ public class AnnotationsFragment extends Fragment {
     private static class AnnotationsAdapter extends RecyclerView.Adapter<CustomViewHolder> {
         private final List<Annotation> annotationList;
         private final Context context;
+        private final FragmentManager fragmentManager;
 
-        public AnnotationsAdapter(List<Annotation> annotationList, Context ctx){
+        public AnnotationsAdapter(List<Annotation> annotationList, Context ctx, FragmentManager fragmentManager){
             this.annotationList = annotationList;
             this.context = ctx;
+            this.fragmentManager = fragmentManager;
         }
 
         @NonNull
@@ -166,7 +205,7 @@ public class AnnotationsFragment extends Fragment {
 
             LayoutInflater inflater = LayoutInflater.from(context);
             View viewAnnotations = inflater.inflate(R.layout.row_annotation, parent,false);
-            return new CustomViewHolder(viewAnnotations, context);
+            return new CustomViewHolder(viewAnnotations, context, fragmentManager);
         }
 
         @Override

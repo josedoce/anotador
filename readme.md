@@ -23,7 +23,7 @@ No momento, só cria, futuramente pretendo colocar mais opções.
 - [ ] Modo Dioguardo - função de guardar no diretorio as anotações.
 - [ ] Encriptação de dados da anotação<br>
 - [ ] Descriptação de dados da anotação<br>
-- [ ] Deleção precisa de anotações<br>
+- [x] Deleção precisa de anotações<br>
 - [ ] Edição de dados da anotação<br>
 - [ ] Mecanismo de busca de anotação<br>
 
