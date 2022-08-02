@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import static java.lang.String.format;
 
 public class DBUser {
-    private static final String TB_NAME = "User";
+    public static final String TB_NAME = "User";
     private final DBHelper dbHelper;
 
     public DBUser(DBHelper db){

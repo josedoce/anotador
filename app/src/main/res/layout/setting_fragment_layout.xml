@@ -2,42 +2,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
-
+    >
     <TextView
+        android:id="@+id/tv_fragment_title"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
        android:textAlignment="center"
         android:text="Configurações"
         android:textSize="30sp" />
 
+    <ListView
+        android:paddingStart="20dp"
+        android:paddingEnd="0dp"
+        android:layout_below="@+id/tv_fragment_title"
+        android:id="@+id/lv_configs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tv_cp"
+        />
+
     <TextView
-        android:textSize="10sp"
+        android:layout_marginTop="40dp"
+        android:id="@+id/tv_cp"
+        android:textSize="11sp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:text=" versão: 1.0.0\n Anotador App\n developed by josedoce\n github.com/josedoce/anotador"
+        android:text=" versão: 1.0.5\n Anotador App\n developed by josedoce\n github.com/josedoce/anotador"
         />
-
-    <TextView
-        android:paddingRight="50dp"
-        android:paddingLeft="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:textAlignment="center"
-        android:text="Ao apertar este botão, você excluirá todas as anotações e seu usuário de acesso. "
-        android:layout_above="@+id/bt_delete_account"/>
-
-    <Button
-        android:id="@+id/bt_delete_account"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:backgroundTint="#FB5050"
-        android:text="Deletar conta" />
-
 </RelativeLayout>
