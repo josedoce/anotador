@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import github.josedoce.anotador.model.Annotation;
 
 public class DBAnnotations {
-    private static final String TB_NAME = "Annotations";
+    public static final String TB_NAME = "Annotations";
     private final DBHelper dbHelper;
     public DBAnnotations(DBHelper db){
         this.dbHelper = db;

@@ -1,6 +1,8 @@
 package github.josedoce.anotador.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.Looper;
 import android.widget.Toast;
@@ -13,29 +15,35 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import github.josedoce.anotador.database.DBAnnotations;
 import github.josedoce.anotador.database.DBHelper;
+import github.josedoce.anotador.database.DBUser;
 import github.josedoce.anotador.model.Annotation;
 import github.josedoce.anotador.model.User;
 
-/**
- *
- * */
 public class Dio {
     private final Context context;
     private String FOLDER_NAME = "Anotador";
+    private String BACKUP_FILENAME = "backup.json";
 
     public Dio(Context context){
         this.context = context;
     }
 
-    private Dio(Context context, String folderName){
+    public Dio(Context context, String folderName){
         this.context = context;
         this.FOLDER_NAME = folderName;
+    }
+
+    public Dio(Context context, String folderName, String backupFilename){
+        this.context = context;
+        this.FOLDER_NAME = folderName;
+        this.BACKUP_FILENAME = backupFilename;
     }
 
     private void alert(String msg){
@@ -91,19 +99,91 @@ public class Dio {
             String userText = gson.toJson(user);
             sb.append("{")
                     .append("\"user\":")
-                    .append(userText)
+                    .append(gson.toJson(userText))
                     .append(",")
                     .append("\"annotations\":")
                     .append(gson.toJson(annotations))
                     .append("}");
 
-            dio.save("backup.json",sb.toString());
+            dio.save(dio.BACKUP_FILENAME, sb.toString());
             dio.alert("Exportação finalizada.");
             Looper.loop();
         }
     }
 
+    public static class DataRecovered {
+        public String user;
+        public String[] annotations;
+        public Gson gson = new Gson();
+
+        public User getUser() {
+            return gson.fromJson(this.user, User.class);
+        }
+
+        public List<Annotation> getAnnotations(){
+            List<Annotation> annotationList = new ArrayList<>();
+            for(String annotation : this.annotations){
+                annotationList.add(gson.fromJson(annotation, Annotation.class));
+            }
+            return annotationList;
+        }
+    }
+
     public void dioImport(DBHelper db){
+        ExecutorService executor= Executors.newSingleThreadExecutor();
+        executor.execute(new DioImport(this, db));
+        executor.shutdown();
+    }
+
+    public static class DioImport implements Runnable {
+        private final Dio dio;
+        private final DBHelper dbHelper;
+
+        public DioImport(Dio dio, DBHelper db){
+            this.dio = dio;
+            this.dbHelper = db;
+        }
+
+        @Override
+        public void run() {
+            Looper.prepare();
+            try {
+                StringBuilder sb = dio.read(dio.BACKUP_FILENAME);
+                if(sb == null)
+                    throw new Exception();
+                Gson gson = new Gson();
+                DataRecovered dr = gson.fromJson(sb.toString(), DataRecovered.class);
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                //delete old user
+                db.execSQL("DELETE FROM "+DBUser.TB_NAME);
+
+                //insert user
+                ContentValues values1 = new ContentValues();
+                values1.put("login", dr.getUser().getLogin());
+                values1.put("password", dr.getUser().getPassword());
+                db.insert(DBUser.TB_NAME, null, values1);
+
+                //insert annotations
+                for(Annotation anno : dr.getAnnotations()){
+                    ContentValues values2 = new ContentValues();
+                    values2.put("title", anno.getTitle());
+                    values2.put("description", anno.getDescription());
+                    values2.put("email", anno.getEmail());
+                    values2.put("password", anno.getPassword());
+                    values2.put("url", anno.getUrl());
+                    values2.put("date", anno.getDate()+","+anno.getHour());
+                    db.insert(DBAnnotations.TB_NAME, null, values2);
+                }
+
+                dio.alert("Importação finalizada com sucesso.");
+            }catch (Exception e){
+                e.printStackTrace();
+                dio.alert("Arquivo invalido ou corrompido.");
+            }
+            Looper.loop();
+        }
+
 
     }
 

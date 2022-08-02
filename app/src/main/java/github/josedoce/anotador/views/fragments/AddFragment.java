@@ -1,5 +1,6 @@
 package github.josedoce.anotador.views.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ public class AddFragment extends Fragment {
     private ViewHolder mViewHolder = new ViewHolder();
     private BottomNavigationView bottomNavigationView;
 
+    @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     Date date = new Date();
     String sdate = sdf.format(date);
