@@ -1,6 +1,9 @@
 package github.josedoce.anotador.views.fragments;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,6 +38,8 @@ import github.josedoce.anotador.views.SignUpActivity;
 public class SettingFragment extends Fragment {
     private DBUser user;
     private DBAnnotations annotations;
+    private static final int STORAGE_PERMISSION_CODE_TO_READ_AND_WRITE = 101;
+
     public SettingFragment(BottomNavigationView bnv){}
 
     @Nullable
@@ -53,12 +61,17 @@ public class SettingFragment extends Fragment {
             switch (i){
                 case 0:
                     if(getActivity() != null && getContext() != null){
-                        DBHelper.deleteDatabase(getContext());
-                        Toast.makeText(getContext(), "Excluído com sucesso.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getContext(), SignUpActivity.class);
-                        //https://stackoverflow.com/questions/6330260/finish-all-previous-activities
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+                        showDialogActions("Deseja mesmo excluir dados de usuário e todas as anotações?", new DialogActions() {
+                            @Override
+                            public void onConfirm() {
+                                DBHelper.deleteDatabase(getContext());
+                                Toast.makeText(getContext(), "Excluído com sucesso.", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getContext(), SignUpActivity.class);
+                                //https://stackoverflow.com/questions/6330260/finish-all-previous-activities
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                            }
+                        });
                     }else{
                         Toast.makeText(getContext(), "Não foi possivel excluir dados.", Toast.LENGTH_SHORT).show();
                     }
@@ -75,17 +88,52 @@ public class SettingFragment extends Fragment {
                             annotationList.add(annotation);
                         }while(cAnnotations.moveToNext());
                     }
+                    checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE_TO_READ_AND_WRITE);
+                    showDialogActions("Deseja mesmo exportar os dados para o dispositivo?", new DialogActions() {
+                        @Override
+                        public void onConfirm() {
+                            dio.dioExport(new User(c), annotationList);
+                        }
+                    });
 
-                    dio.dioExport(new User(c), annotationList);
                     break;
                 case 2:
-
-                    dio.dioImport(db);
+                    checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE_TO_READ_AND_WRITE);
+                    showDialogActions("Deseja mesmo importar os dados do dispositivo?", new DialogActions() {
+                        @Override
+                        public void onConfirm() {
+                            dio.dioImport(db);
+                        }
+                    });
                     break;
             }
-
         });
 
         return F;
+    }
+
+    private interface DialogActions {
+        void onConfirm();
+    }
+
+    private void showDialogActions(String msg, DialogActions dialogActions){
+        Context context = requireContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder
+                .setMessage(msg)
+                .setPositiveButton("sim", (dialog, which) -> {
+                   dialogActions.onConfirm();
+                })
+                .setNegativeButton("não",((dialog, which) -> {}));
+        builder.show();
+    }
+
+    public void checkPermission(String permission, int requestCode)
+    {
+        //check permissions
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_DENIED) {
+            Toast.makeText(requireContext(), "Permissão não permitida.", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(requireActivity(), new String[] { permission }, requestCode);
+        }
     }
 }
