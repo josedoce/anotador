@@ -15,7 +15,7 @@ No momento, só cria, futuramente pretendo colocar mais opções.
 
 ### Download
 
-[baixar anotador v1.0.5](https://github.com/josedoce/anotador/releases/download/fifth_app/Anotador_v1_0_5.apk) - 3.33mb
+[baixar anotador v1.0.6](https://github.com/josedoce/anotador/releases/download/sixth_app/Anotador_v1_0_6.apk) - 3.33mb
 
 ### Screenshots
 <img src="screenshots/splashscreen.png" width="250px" alt="splashscreen"/><img src="screenshots/register.png" width="250px" alt="screen register"/><img src="screenshots/login.png" width="250px" alt="screen login"/><img src="screenshots/annotations.png" width="250px" alt="screen annotations"/><img src="screenshots/add_annotation.png" width="250px" alt="screeen add new annotation"/><img src="screenshots/edit_annotation.png" width="250px" alt="screeen add new annotation"/><img src="screenshots/setting.png" width="250px" alt="screen setting"/><br>
