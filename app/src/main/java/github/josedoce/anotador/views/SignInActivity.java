@@ -3,8 +3,11 @@ package github.josedoce.anotador.views;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import github.josedoce.anotador.R;
+import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.database.DBHelper;
 
 import github.josedoce.anotador.database.DBUser;
@@ -27,6 +31,7 @@ public class SignInActivity extends AppCompatActivity {
         EditText et_login;
         EditText et_password;
         TextView tv_info;
+        ProgressBar pb_signin;
     }
 
     @Override
@@ -37,11 +42,22 @@ public class SignInActivity extends AppCompatActivity {
         mViewHolder.et_password = findViewById(R.id.et_password);
         mViewHolder.tv_info = findViewById(R.id.tv_info);
         mViewHolder.bt_doLogin = findViewById(R.id.bt_doLogin);
+        mViewHolder.pb_signin = findViewById(R.id.pb_signin);
+
         DBHelper db = new DBHelper(this);
         dbUser = new DBUser(db);
 
         mViewHolder.bt_doLogin.setOnClickListener((view)->{
-            doLogin();
+            mViewHolder.bt_doLogin.setVisibility(View.GONE);
+            mViewHolder.pb_signin.setVisibility(View.VISIBLE);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    doLogin();
+                    mViewHolder.bt_doLogin.setVisibility(View.VISIBLE);
+                    mViewHolder.pb_signin.setVisibility(View.GONE);
+                }
+            });
         });
     }
 
@@ -80,7 +96,8 @@ public class SignInActivity extends AppCompatActivity {
                 Alert.handler(alert, 10000);
                 return;
             }
-
+            AnotadorContext auth = (AnotadorContext) getApplicationContext();
+            auth.setUser(password);
             Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
             startActivity(intent);
             Toast.makeText(this, "Bem vindo "+user.getLogin(), Toast.LENGTH_LONG).show();

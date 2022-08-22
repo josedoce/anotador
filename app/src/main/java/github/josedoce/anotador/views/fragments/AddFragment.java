@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import github.josedoce.anotador.R;
+import github.josedoce.anotador.annotations.Senhador;
+import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.database.DBAnnotations;
 import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.model.Annotation;
@@ -45,6 +47,11 @@ public class AddFragment extends Fragment {
 
     public AddFragment(BottomNavigationView bnv){
         this.bottomNavigationView = bnv;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -78,6 +85,13 @@ public class AddFragment extends Fragment {
             Cursor cursor = dbAnnotations.selectById(id);
             cursor.moveToFirst();
             Annotation annotation = new Annotation(cursor);
+
+            //decrypt
+            Context context = getActivity();
+            if(context != null){
+                AnotadorContext anotadorContext = (AnotadorContext) context.getApplicationContext();
+                Senhador.createDecryptedModel(anotadorContext.getUser(), annotation);
+            }
 
             mViewHolder.bt_create.setText("editar");
             setText(mViewHolder.et_title, annotation.getTitle());
@@ -119,6 +133,14 @@ public class AddFragment extends Fragment {
                     vdate,
                     vhour
             );
+
+            //encrypt
+            Context context = getActivity();
+            if(context != null){
+                AnotadorContext anotadorContext = (AnotadorContext) context.getApplicationContext();
+                Senhador.createEncryptedModel(anotadorContext.getUser(), annotation);
+            }
+
             if(status.equals("create")){
                 dbAnnotations.create(annotation);
                 Toast.makeText(getContext(), "Salvo com sucesso.", Toast.LENGTH_LONG).show();

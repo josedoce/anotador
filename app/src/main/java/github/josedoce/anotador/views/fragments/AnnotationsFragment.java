@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import github.josedoce.anotador.R;
+import github.josedoce.anotador.annotations.Senhador;
+import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.database.DBAnnotations;
 import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.model.Annotation;
@@ -71,8 +73,17 @@ public class AnnotationsFragment extends Fragment {
         Cursor cursor = dbAnnotations.selectAll();
         cursor.moveToFirst();
         if(cursor.getCount() > 0){
+
+            Context context = getActivity();
+            AnotadorContext anotadorContext = null;
+            if(context != null){
+                anotadorContext = (AnotadorContext) context.getApplicationContext();
+            }
             do {
                 Annotation annotation = new Annotation(cursor);
+                if(anotadorContext != null){
+                    Senhador.createDecryptedModel(anotadorContext.getUser(), annotation);
+                }
                 annotationList.add(annotation);
             }while(cursor.moveToNext());
         }

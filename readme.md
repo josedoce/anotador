@@ -18,15 +18,15 @@ No momento, só cria, futuramente pretendo colocar mais opções.
 [baixar anotador v1.0.5](https://github.com/josedoce/anotador/releases/download/fifth_app/Anotador_v1_0_5.apk) - 3.33mb
 
 ### Screenshots
-<img src="screenshots/splashscreen.png" width="250px" alt="splashscreen"/><img src="screenshots/register.png" width="250px" alt="screen register"/><img src="screenshots/login.png" width="250px" alt="screen login"/><img src="screenshots/annotations.png" width="250px" alt="screen annotations"/><img src="screenshots/add_annotation.png" width="250px" alt="screeen add new annotation"/><img src="screenshots/setting.png" width="250px" alt="screen setting"/><br>
+<img src="screenshots/splashscreen.png" width="250px" alt="splashscreen"/><img src="screenshots/register.png" width="250px" alt="screen register"/><img src="screenshots/login.png" width="250px" alt="screen login"/><img src="screenshots/annotations.png" width="250px" alt="screen annotations"/><img src="screenshots/add_annotation.png" width="250px" alt="screeen add new annotation"/><img src="screenshots/edit_annotation.png" width="250px" alt="screeen add new annotation"/><img src="screenshots/setting.png" width="250px" alt="screen setting"/><br>
 
 
 ### (Básico) Ainda falta:
 - [x] Melhor visual do Card de anotação;<br>
 - [x] Função de esconder e exibir senha;<br>
 - [x] Modo Dioguardo - função de guardar e resgatar dados de usuário salvos no diretorio as anotações;<br>
-- [ ] Encriptação de dados da anotação;<br>
-- [ ] Descriptação de dados da anotação;<br>
+- [x] Encriptação de dados da anotação;<br>
+- [x] Descriptação de dados da anotação;<br>
 - [x] Deleção precisa de anotações;<br>
 - [x] Edição de dados da anotação;<br>
 - [x] Mecanismo de busca de anotação;<br>

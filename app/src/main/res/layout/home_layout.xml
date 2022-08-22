@@ -20,8 +20,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/menu_inferior"
-        app:itemTextColor="@drawable/bottom_navigation_selector"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bottom_navigation"
         app:itemIconTint="@drawable/bottom_navigation_selector"
-        />
+        app:itemTextColor="@drawable/bottom_navigation_selector"
+        app:menu="@menu/menu_inferior" />
 </RelativeLayout>

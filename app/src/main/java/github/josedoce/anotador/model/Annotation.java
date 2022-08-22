@@ -2,14 +2,23 @@ package github.josedoce.anotador.model;
 
 import android.database.Cursor;
 
+import github.josedoce.anotador.annotations.Enc;
+
 public class Annotation {
     private Integer id;
+    @Enc
     private String title;
+    @Enc
     private String description;
+    @Enc
     private String email;
+    @Enc
     private String password;
+    @Enc
     private String url;
+    @Enc
     private String date;
+    @Enc
     private String hour;
 
     public Annotation() {}
