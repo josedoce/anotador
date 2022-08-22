@@ -77,6 +77,12 @@
             android:textColor="#EF5757"
             android:text=""
             />
+        <TextView
+            android:id="@+id/tv_import"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="importar dados"
+            android:textColor="#25ED46"/>
         <Button
             android:id="@+id/bt_doRegister"
             android:layout_marginTop="10dp"

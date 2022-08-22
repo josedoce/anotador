@@ -11,7 +11,7 @@
         -->
     <application
         android:allowBackup="true"
-
+        android:name=".context.AnotadorContext"
         android:requestLegacyExternalStorage="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.SignInActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".views.SignUpActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".views.SignUpActivity" android:theme="@style/Theme.AppCompat.NoActionBar" android:screenOrientation="portrait"/>
         <activity android:name=".views.HomeActivity" android:screenOrientation="portrait"/>
     </application>
 
