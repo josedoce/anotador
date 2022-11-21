@@ -7,6 +7,7 @@
 
 ### Tecnlogias
 
+Android studio.
 Java.
 
 ### O que ele faz
@@ -14,6 +15,7 @@ Java.
 No momento, só cria, futuramente pretendo colocar mais opções.
 
 ### Download
+Aviso: Antes de baixar, fique ciente da falta de um certificado de desenvolvedor válido, logo, a Playstore atestara a aplicação(apk) como sendo perigosa, mas não se preocupe. Contudo, fique livre para ler o código fonte e criar sua própria build usando um certificado válido ou até uma keystore própria.
 
 [baixar anotador v1.0.6](https://github.com/josedoce/anotador/releases/download/sixth_app/Anotador_v1_0_6.apk) - 4.29mb
 
