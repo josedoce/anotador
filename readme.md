@@ -12,7 +12,7 @@ Java.
 
 ### O que ele faz
 
-No momento, só cria, futuramente pretendo colocar mais opções.
+No momento, só cria anotações, edita, deleta e importa, futuramente pretendo colocar mais opções.
 
 ### Download
 Aviso: Antes de baixar, fique ciente da falta de um certificado de desenvolvedor válido, logo, a Playstore atestara a aplicação(apk) como sendo perigosa, mas não se preocupe. Contudo, fique livre para ler o código fonte e criar sua própria build usando um certificado válido ou até uma keystore própria.
