@@ -169,9 +169,9 @@ public class Dio {
                     ContentValues values2 = new ContentValues();
                     values2.put("title", anno.getTitle());
                     values2.put("description", anno.getDescription());
-                    values2.put("email", anno.getEmail());
-                    values2.put("password", anno.getPassword());
-                    values2.put("url", anno.getUrl());
+                    //values2.put("email", anno.getEmail());
+                    //values2.put("password", anno.getPassword());
+                    //values2.put("url", anno.getUrl());
                     values2.put("date", anno.getDate()+","+anno.getHour());
                     db.insert(DBAnnotations.TB_NAME, null, values2);
                 }

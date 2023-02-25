@@ -18,9 +18,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.views.fragments.AddFragment;
@@ -28,23 +32,20 @@ import github.josedoce.anotador.views.fragments.AnnotationsFragment;
 import github.josedoce.anotador.views.fragments.SettingFragment;
 
 public class HomeActivity extends AppCompatActivity {
+    private AtomicBoolean isGrantedPermission = new AtomicBoolean(false);
     private static final int STORAGE_PERMISSION_CODE = 101;
-    private final ViewHolder mViewHolder = new ViewHolder();
-
-    public static class ViewHolder {
-        FrameLayout fl_framelayout_home;
-        BottomNavigationView bnv_menu_home;
-    }
+    private FrameLayout fl_framelayout_home;
+    private BottomNavigationView bnv_menu_home;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_layout);
-        mViewHolder.fl_framelayout_home = findViewById(R.id.fl_framelayout_home);
-        mViewHolder.bnv_menu_home = findViewById(R.id.bnv_menu_home);
+        fl_framelayout_home = findViewById(R.id.fl_framelayout_home);
+        bnv_menu_home = findViewById(R.id.bnv_menu_home);
 
-        defaultFragment(new AnnotationsFragment(mViewHolder.bnv_menu_home, getSupportFragmentManager()));
-        mViewHolder.bnv_menu_home.setOnItemSelectedListener(this::switchFraments);
+        defaultFragment(new AnnotationsFragment());
+        bnv_menu_home.setOnItemSelectedListener(this::switchFraments);
     }
 
     @Override
@@ -62,24 +63,29 @@ public class HomeActivity extends AppCompatActivity {
         Fragment selectedFragment = null;
         switch (item.getItemId()){
             case R.id.ic_annotations:
-                selectedFragment = new AnnotationsFragment(mViewHolder.bnv_menu_home, getSupportFragmentManager());
+                selectedFragment = new AnnotationsFragment();
                 break;
             case R.id.ic_add:
-                selectedFragment = new AddFragment(mViewHolder.bnv_menu_home);
+                selectedFragment = new AddFragment();
                 break;
             case R.id.ic_setting:
-                selectedFragment = new SettingFragment(mViewHolder.bnv_menu_home);
+                selectedFragment = new SettingFragment();
                 break;
         }
         fragmentManager(selectedFragment);
         return true;
     }
 
-    private void fragmentManager(Fragment fragment){
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fl_framelayout_home, fragment)
-                .commit();
+    public BottomNavigationView getBottomNavigationView() {
+        return bnv_menu_home;
+    }
+
+    public boolean getWRStatusPermission(){
+        return isGrantedPermission.get();
+    }
+
+    public void setWRStatusPermission(boolean bool){
+        isGrantedPermission.set(bool);
     }
 
     @Override
@@ -88,8 +94,10 @@ public class HomeActivity extends AppCompatActivity {
         if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Acesso ao armazenamento permitida.", Toast.LENGTH_SHORT).show();
+                isGrantedPermission.set(true);
             } else {
                 Toast.makeText(this, "Acesso ao armazenamento negada.", Toast.LENGTH_SHORT).show();
+                isGrantedPermission.set(false);
             }
         }
     }
@@ -115,5 +123,18 @@ public class HomeActivity extends AppCompatActivity {
 
 
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    private void fragmentManager(Fragment fragment){
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fl_framelayout_home, fragment)
+                .commit();
     }
 }

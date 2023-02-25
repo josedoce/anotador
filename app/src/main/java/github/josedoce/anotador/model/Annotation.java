@@ -2,6 +2,8 @@ package github.josedoce.anotador.model;
 
 import android.database.Cursor;
 
+import java.util.List;
+
 import github.josedoce.anotador.annotations.Enc;
 
 public class Annotation {
@@ -11,15 +13,11 @@ public class Annotation {
     @Enc
     private String description;
     @Enc
-    private String email;
-    @Enc
-    private String password;
-    @Enc
-    private String url;
-    @Enc
     private String date;
     @Enc
     private String hour;
+
+    private List<Field> fieldList = null;
 
     public Annotation() {}
 
@@ -31,23 +29,22 @@ public class Annotation {
         int cPassword = cursor.getColumnIndex("password");
         int cUrl = cursor.getColumnIndex("url");
         int cDate = cursor.getColumnIndex("date");
+        int cFieldType = cursor.getColumnIndex("fieldType");
         setId(cursor.getInt(cId));
         setTitle(cursor.getString(cTitle));
         setDescription(cursor.getString(cDescription));
-        setEmail(cursor.getString(cEmail));
-        setPassword(cursor.getString(cPassword));
-        setUrl(cursor.getString(cUrl));
+        //setEmail(cursor.getString(cEmail));
+        //setPassword(cursor.getString(cPassword));
+        //setUrl(cursor.getString(cUrl));
         String[] vDate = cursor.getString(cDate).split(",");
         setDate(vDate[0]);
         setHour(vDate[1]);
+        //setFieldType(cursor.getString(cFieldType));
     }
 
-    public Annotation(String title, String description, String email, String password, String url, String date, String hour) {
+    public Annotation(String title, String description, String date, String hour) {
         this.title = title;
         this.description = description;
-        this.email = email;
-        this.password = password;
-        this.url = url;
         this.date = date;
         this.hour = hour;
     }
@@ -76,30 +73,6 @@ public class Annotation {
         this.description = description;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getDate() {
         return date;
     }
@@ -115,4 +88,13 @@ public class Annotation {
     public void setHour(String hour) {
         this.hour = hour;
     }
+
+    public List<Field> getFieldList() {
+        return fieldList;
+    }
+
+    public void setFieldList(List<Field> fieldList) {
+        this.fieldList = fieldList;
+    }
+
 }

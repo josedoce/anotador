@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:id="@+id/ll_password"
+    android:layout_marginTop="4dp"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <EditText
+        android:id="@+id/et_field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="11"
+        android:background="@drawable/round_content_card"
+        android:padding="4dp"
+        android:text="Senha"
+        android:focusable="false"
+        android:inputType="textPassword"
+        android:textSize="18sp"
+        />
+    <ImageButton
+        android:backgroundTint="#00000000"
+        android:id="@+id/bt_function"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_open_eye_24"
+        />
+</LinearLayout>

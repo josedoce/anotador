@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.List;
+
 import github.josedoce.anotador.model.Annotation;
+import github.josedoce.anotador.model.Field;
 
 public class DBAnnotations {
     public static final String TB_NAME = "Annotations";
@@ -14,16 +17,21 @@ public class DBAnnotations {
     }
 
     public long create(Annotation annotation){
+        long status = -1;
         //id, title, description, email, password, url, date
         SQLiteDatabase db = this.dbHelper.getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", annotation.getTitle());
         values.put("description", annotation.getDescription());
-        values.put("email", annotation.getEmail());
-        values.put("password", annotation.getPassword());
-        values.put("url", annotation.getUrl());
         values.put("date", annotation.getDate()+","+annotation.getHour());
-        return db.insert(TB_NAME, null, values);
+        status = db.insert(TB_NAME, null, values);
+
+        if(status == -1) return status;
+        if(annotation.getFieldList() == null) return status;
+
+        DBFields dbFields = new DBFields(this.dbHelper);
+        status = dbFields.create(annotation.getFieldList());
+        return status;
     }
 
     public Cursor selectAll(){
@@ -41,11 +49,11 @@ public class DBAnnotations {
         ContentValues values = new ContentValues();
         values.put("title", annotation.getTitle());
         values.put("description", annotation.getDescription());
-        values.put("email", annotation.getEmail());
-        values.put("password", annotation.getPassword());
-        values.put("url", annotation.getUrl());
+        //values.put("email", annotation.getEmail());
+        //values.put("password", annotation.getPassword());
+        //values.put("url", annotation.getUrl());
         values.put("date", annotation.getDate()+","+annotation.getHour());
-
+        //values.put("fieldType", annotation.getFieldType());
         return db.update(TB_NAME, values, "id=?",new String[]{annotation.getId().toString()});
     }
 

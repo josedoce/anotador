@@ -20,7 +20,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Anotador"
-
         tools:targetApi="31">
         <activity
             android:screenOrientation="portrait"
@@ -35,6 +34,7 @@
         <activity android:name=".views.SignInActivity" android:screenOrientation="portrait"/>
         <activity android:name=".views.SignUpActivity" android:theme="@style/Theme.AppCompat.NoActionBar" android:screenOrientation="portrait"/>
         <activity android:name=".views.HomeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".views.DetailActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

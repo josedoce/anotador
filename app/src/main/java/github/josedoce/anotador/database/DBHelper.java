@@ -12,12 +12,16 @@ public class DBHelper extends SQLiteOpenHelper {
     private static String[] sql = {
             "CREATE TABLE User(login TEXT PRIMARY KEY, password TEXT);",
             //"INSERT INTO User VALUES('jose', '123');",
-            "CREATE TABLE Annotations(id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(255), description TEXT, email VARCHAR(255), password VARCHAR(255), url TEXT, date VARCHAR(20));"
+            "CREATE TABLE Annotations(id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(255), description TEXT, email VARCHAR(255), password VARCHAR(255), url TEXT, date VARCHAR(20), fieldType VARCHAR(255));",
+            "CREATE TABLE Fields(id INTEGER PRIMARY KEY AUTOINCREMENT, annotationId INTEGER, label VARCHAR(255), value TEXT, type INTEGER);"
+
+
     };
 
     private static String[] upgrade = {
             "DROP TABLE IF EXISTS User;",
-            "DROP TABLE IF EXISTS Annotations;"
+            "DROP TABLE IF EXISTS Annotations;",
+            "DROP TABLE IF EXISTS Fields;"
     };
 
     public DBHelper(@Nullable Context context) {
