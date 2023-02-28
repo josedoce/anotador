@@ -38,21 +38,46 @@
             android:backgroundTint="#00FDFCFC"
             android:src="@drawable/ic_close_24"/>
     </RelativeLayout>
-    <TextView
-        android:id="@+id/tv_annotation_total"
-        android:layout_width="wrap_content"
+
+    <RelativeLayout
+        android:id="@+id/rl_grid_mode"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_search"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:text="20 anotações no total"
-        android:textAlignment="textEnd"
-        android:textSize="10sp" />
+        android:layout_below="@+id/rl_search">
+        <ImageButton
+            android:id="@+id/ib_two_col"
+            android:contentDescription="grid de 2 colunas"
+            android:layout_marginStart="20dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_grid_view_24"
+            />
+
+        <ImageButton
+            android:id="@+id/ib_one_col"
+            android:layout_toEndOf="@+id/ib_two_col"
+            android:contentDescription="grid de 1 coluna"
+            android:layout_marginStart="6dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_baseline_view_headline_24"
+            />
+        <TextView
+            android:id="@+id/tv_annotation_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:text="20 anotações no total"
+            android:textAlignment="textEnd"
+            android:textSize="10sp" />
+    </RelativeLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_annotations_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tv_annotation_total"
+        android:layout_below="@+id/rl_grid_mode"
         android:padding="8dp" />
 </RelativeLayout>

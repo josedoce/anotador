@@ -38,17 +38,22 @@
 
 
         <ImageButton
+            android:layout_marginStart="16dp"
+            android:layout_centerInParent="true"
             android:contentDescription="Editar anotação"
             android:backgroundTint="#A46BF10B"
             android:id="@+id/ib_edite"
+            android:background="@drawable/action_button"
             android:layout_toStartOf="@id/ib_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_edit_24"
             />
         <ImageButton
+            android:layout_marginStart="6dp"
             android:contentDescription="Excluir anotação"
             android:backgroundTint="#A4F10B0B"
+            android:background="@drawable/action_button"
             android:id="@+id/ib_delete"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"

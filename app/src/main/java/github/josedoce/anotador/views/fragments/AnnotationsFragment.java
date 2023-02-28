@@ -26,6 +26,7 @@ import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.database.DBAnnotations;
 import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.model.Annotation;
+import github.josedoce.anotador.service.AnnotationService;
 import github.josedoce.anotador.views.HomeActivity;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,25 +45,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnnotationsFragment extends Fragment {
-    private FragmentManager fragmentManager;
-    private BottomNavigationView bottomNavigationView;
+
     private RecyclerView rv_annotations_list;
     private TextView tv_annotation_total;
-    private ImageButton ib_search_btn;
+    private ImageButton ib_search_btn, ib_one_col, ib_two_col;
     private EditText et_search;
     private AnnotationsAdapter adapter;
     private final List<Annotation> annotationListOriginalCopy = new ArrayList<>();
     private List<Annotation> annotationList;
-    private DBHelper db;
+    private AnnotationService annotationService;
+    private AnotadorContext anotadorContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         HomeActivity homeActivity = (HomeActivity) getActivity();
         if(homeActivity != null){
-            this.bottomNavigationView = homeActivity.getBottomNavigationView();
-            this.fragmentManager = homeActivity.getSupportFragmentManager();
+            anotadorContext = (AnotadorContext) homeActivity.getApplicationContext();
         }
+        annotationList = new ArrayList<>();
+        annotationService = new AnnotationService(getContext(), anotadorContext.getUser());
     }
 
     @SuppressLint({"DefaultLocale"})
@@ -74,41 +77,28 @@ public class AnnotationsFragment extends Fragment {
         tv_annotation_total = F.findViewById(R.id.tv_annotation_total);
         ib_search_btn = F.findViewById(R.id.ib_search_btn);
         et_search = F.findViewById(R.id.et_search);
+        ib_one_col = F.findViewById(R.id.ib_one_col);
+        ib_two_col = F.findViewById(R.id.ib_two_col);
 
-        annotationList = new ArrayList<>();
-
-
-        db = new DBHelper(getContext());
-        DBAnnotations dbAnnotations = new DBAnnotations(db);
-
-        Cursor cursor = dbAnnotations.selectAll();
-        cursor.moveToFirst();
-        if(cursor.getCount() > 0){
-
-            Context context = getActivity();
-            AnotadorContext anotadorContext = null;
-            if(context != null){
-                anotadorContext = (AnotadorContext) context.getApplicationContext();
-            }
-            do {
-                Annotation annotation = new Annotation(cursor);
-                if(anotadorContext != null){
-                    Senhador.createDecryptedModel(anotadorContext.getUser(), annotation);
-                }
-                annotationList.add(annotation);
-            }while(cursor.moveToNext());
-        }
+        annotationList.addAll(annotationService.listAllAnnotations());
         annotationListOriginalCopy.addAll(annotationList);
 
-
         //adapter
-        adapter = new AnnotationsAdapter(annotationList, getContext(), fragmentManager, bottomNavigationView);
+        adapter = new AnnotationsAdapter(annotationList);
         rv_annotations_list.setAdapter(adapter);
 
         //layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(F.getContext());
         rv_annotations_list.setLayoutManager(layoutManager);
         updateTotal();
+
+        ib_two_col.setOnClickListener((view)->{
+            setVisualization(new GridLayoutManager(F.getContext(), 2));
+        });
+
+        ib_one_col.setOnClickListener((view)->{
+            setVisualization(new LinearLayoutManager(F.getContext()));
+        });
 
         //search
         et_search.setOnFocusChangeListener((v, hasFocus) -> {
@@ -118,6 +108,7 @@ public class AnnotationsFragment extends Fragment {
                 ib_search_btn.setVisibility(View.VISIBLE);
             }
         });
+
         et_search.addTextChangedListener(new CustomTextWatcher(this));
 
         ib_search_btn.setOnClickListener((view)->{
@@ -125,6 +116,11 @@ public class AnnotationsFragment extends Fragment {
             search();
         });
         return F;
+    }
+
+    private void setVisualization(RecyclerView.LayoutManager manager){
+        rv_annotations_list.setLayoutManager(manager);
+        updateTotal();
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -175,6 +171,12 @@ public class AnnotationsFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {}
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        annotationService.destroy();
     }
 
     /*

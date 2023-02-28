@@ -27,9 +27,14 @@ public class DBAnnotations {
         status = db.insert(TB_NAME, null, values);
 
         if(status == -1) return status;
-        if(annotation.getFieldList() == null) return status;
+        if(annotation.getFieldList() == null || annotation.getFieldList().size() == 0) return status;
 
         DBFields dbFields = new DBFields(this.dbHelper);
+        //set annotationId
+        for(Field field : annotation.getFieldList()){
+            field.setAnnotationId((int)status);
+        }
+
         status = dbFields.create(annotation.getFieldList());
         return status;
     }

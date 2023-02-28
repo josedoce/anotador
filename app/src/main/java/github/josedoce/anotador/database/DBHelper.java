@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
+
     private static int version = 1;
     private static final String dbName = "anotador.db";
     private static String[] sql = {
@@ -45,6 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public static void deleteDatabase(Context context){
+
         //https://stackoverflow.com/questions/40237579/delete-database-android-sqlite
         context.deleteDatabase(dbName);
     }

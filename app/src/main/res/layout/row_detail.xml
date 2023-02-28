@@ -9,8 +9,8 @@
     android:layout_height="wrap_content">
 
 
-    <EditText
-        android:id="@+id/et_field"
+    <TextView
+        android:id="@+id/tv_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="11"

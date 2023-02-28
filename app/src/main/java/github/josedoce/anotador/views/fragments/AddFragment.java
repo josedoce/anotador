@@ -41,29 +41,24 @@ import github.josedoce.anotador.handler.DialogInfo;
 import github.josedoce.anotador.handler.DialogProgress;
 import github.josedoce.anotador.model.Annotation;
 import github.josedoce.anotador.model.Field;
+import github.josedoce.anotador.service.AnnotationService;
 import github.josedoce.anotador.views.HomeActivity;
 
 public class AddFragment extends Fragment {
     private List<View> viewList;
-    private String status = "create";
-    private int id;
-    private DBHelper db;
-    private DBAnnotations dbAnnotations;
-    private DBFields dbFields;
-
     private BottomNavigationView bottomNavigationView;
     private LinearLayout ll_form_body;
-    TextView
+    private TextView
             tv_date,
             tv_hour;
-
-    EditText
+    private EditText
             et_title,
             et_description;
-    Button
+    private Button
             bt_create,
             bt_cancel;
-
+    private AnotadorContext anotadorContext;
+    private AnnotationService annotationService;
 
     @SuppressLint("SimpleDateFormat")
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -79,7 +74,9 @@ public class AddFragment extends Fragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         if(homeActivity != null){
             this.bottomNavigationView = homeActivity.getBottomNavigationView();
+            anotadorContext = (AnotadorContext) homeActivity.getApplicationContext();
         }
+        annotationService = new AnnotationService(this.getActivity(), anotadorContext.getUser());
     }
 
     @Nullable
@@ -88,10 +85,6 @@ public class AddFragment extends Fragment {
 
         View F = inflater.inflate(R.layout.add_fragment_layout, container, false);
         viewList = new ArrayList<>();
-        db = new DBHelper(getContext());
-        dbAnnotations = new DBAnnotations(db);
-        dbFields = new DBFields(db);
-
 
         tv_date = F.findViewById(R.id.tv_date);
         tv_hour = F.findViewById(R.id.tv_hour);
@@ -111,6 +104,7 @@ public class AddFragment extends Fragment {
         //o layoutInflater vai injetar qualquer elemento(filho) no Pai.
         LayoutInflater layoutInflater = LayoutInflater.from(getContext());
         Button button_modal = F.findViewById(R.id.bt_create_field);
+
         button_modal.setOnClickListener((view)->{
             DialogAddField dialogAddField = new DialogAddField(requireContext());
             dialogAddField.setOnCreateField(field -> {
@@ -135,28 +129,6 @@ public class AddFragment extends Fragment {
             });
             dialogAddField.show();
         });
-
-        //update logic
-        if(getArguments() != null){
-            status = getArguments().getString("status");
-            id = Integer.parseInt(getArguments().getString("id"));
-            Cursor cursor = dbAnnotations.selectById(id);
-            cursor.moveToFirst();
-            Annotation annotation = new Annotation(cursor);
-
-            //decrypt
-            Context context = getActivity();
-            if(context != null){
-                AnotadorContext anotadorContext = (AnotadorContext) context.getApplicationContext();
-                Senhador.createDecryptedModel(anotadorContext.getUser(), annotation);
-            }
-
-            bt_create.setText("editar");
-            setText(et_title, annotation.getTitle());
-            setText(et_description, annotation.getDescription());
-        }else{
-            bt_create.setText("criar");
-        }
 
         //cancel
         bt_cancel.setOnClickListener((view)->{
@@ -184,10 +156,8 @@ public class AddFragment extends Fragment {
             }
 
             if(!isValid(editTexts)){
-                DialogInfo dialogInfo = new DialogInfo(getContext(), "Escreve ai man","Titulo e descrição do x9.",DialogInfo.INFO);
+                DialogInfo dialogInfo = new DialogInfo(getContext(), "Campos vazios","Titulo e descrição são necessários.",DialogInfo.INFO);
                 dialogInfo.show();
-
-                //Toast.makeText(getContext(), "Todos os campos são necessários.", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -198,32 +168,16 @@ public class AddFragment extends Fragment {
                     vhour
             );
 
-            //encrypt
-            Context context = getActivity();
-            if(context != null){
-                AnotadorContext anotadorContext = (AnotadorContext) context.getApplicationContext();
-                if(fieldList.size() > 0){
-                    for(Field field : fieldList){
-                        Senhador.createEncryptedModel(anotadorContext.getUser(), field);
-                    }
-                }
-                Senhador.createEncryptedModel(anotadorContext.getUser(), annotation);
-            }
-
-            if(status.equals("create")){
-                long annotationId = dbAnnotations.create(annotation);
-                if(annotationId != -1 && fieldList.size() > 0){
-                    for(Field field: fieldList){
-                        field.setAnnotationId((int) annotationId);
-                    }
-                    dbFields.create(fieldList);
-                }
-                Toast.makeText(getContext(), "Salvo com sucesso.", Toast.LENGTH_LONG).show();
-                bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
-            }
-            if(status.equals("edit")){
-                annotation.setId(id);
-                showDeleteDialogActions(annotation);
+            annotation.setFieldList(fieldList);
+            boolean isCreated = annotationService.createAnnotation(annotation);
+            if(isCreated){
+                DialogInfo dialogInfo2 = new DialogInfo(getContext(), "Sucesso","Salvo com sucesso.",DialogInfo.SUCCESS);
+                dialogInfo2.setOnDismissListener(dialog -> {
+                    bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
+                });
+                dialogInfo2.show();
+            }else{
+                Toast.makeText(getContext(), "Não foi possivel salvar.", Toast.LENGTH_LONG).show();
             }
         });
         return F;
@@ -235,7 +189,7 @@ public class AddFragment extends Fragment {
         builder
                 .setMessage("Deseja editar esta anotação ?")
                 .setPositiveButton("sim", (dialog, which) -> {
-                    long res = dbAnnotations.update(annotation);;
+                    long res = 0 ;//dbAnnotations.update(annotation);;
                     if(res != 0){
                         Toast.makeText(getContext(), "Editado com sucesso.", Toast.LENGTH_LONG).show();
                         bottomNavigationView.setSelectedItemId(R.id.ic_annotations);
@@ -247,7 +201,7 @@ public class AddFragment extends Fragment {
         builder.show();
     }
 
-    public boolean isValid(EditText[] ets){
+    private boolean isValid(EditText[] ets){
         int countError = 0;
         for(EditText et : ets){
             if(et.getText().toString().trim().isEmpty()){
@@ -282,6 +236,7 @@ public class AddFragment extends Fragment {
         bottomNavigationView = null;
         ll_form_body = null;
         viewList.clear();
+        annotationService.destroy();
     }
 
 }
