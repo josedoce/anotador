@@ -8,6 +8,7 @@ import android.content.Context;
 import android.text.InputType;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class DetailAdapter extends ArrayAdapter<Field> {
         LayoutInflater inflater = LayoutInflater.from(this.context);
         View v = inflater.inflate(R.layout.row_detail, null, false);
         TextView tv_field = v.findViewById(R.id.tv_field);
+        TextView tv_label_name = v.findViewById(R.id.tv_label_name);
         ImageButton bt_function = v.findViewById(R.id.bt_function);
 
         bt_function.setVisibility(View.GONE);
@@ -65,6 +67,7 @@ public class DetailAdapter extends ArrayAdapter<Field> {
 
         tv_field.setText(field.getValue());
         tv_field.setInputType(field.getType());
+        tv_label_name.setText(field.getLabel());
         return v;
     }
 
@@ -79,6 +82,7 @@ public class DetailAdapter extends ArrayAdapter<Field> {
             Toast.makeText(context, "Não foi possivel copiar.", Toast.LENGTH_LONG).show();
         }
     }
+
     private static boolean isPasswordShown = false;
     private void showAndHidePassword(ImageButton button, TextView textView){
         if(!isPasswordShown){

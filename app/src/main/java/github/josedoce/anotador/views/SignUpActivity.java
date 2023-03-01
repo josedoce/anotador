@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,11 +21,11 @@ import androidx.core.content.ContextCompat;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import github.josedoce.anotador.R;
-import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.database.DBUser;
 import github.josedoce.anotador.handler.Alert;
 import github.josedoce.anotador.utils.Dio;
+import github.josedoce.anotador.utils.PreferenceManager;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final int STORAGE_PERMISSION_CODE_TO_READ_AND_WRITE = 101;
@@ -34,6 +36,8 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.signup_layout);
 
         mViewHolder.et_login = findViewById(R.id.et_login);
@@ -99,8 +103,9 @@ public class SignUpActivity extends AppCompatActivity {
             long res = dbUser.create(login, hash);
             if(res > 0){
                 Toast.makeText(this, "Registrado com sucesso!", Toast.LENGTH_LONG).show();
-                AnotadorContext auth = (AnotadorContext) getApplicationContext();
-                auth.setUser(password);
+                PreferenceManager pm = PreferenceManager.getInstance(getApplicationContext());
+                pm.putString("username", login);
+                pm.putString("userpassword", password);
                 Intent intent = new Intent(this, HomeActivity.class);
                 startActivity(intent);
             }else{

@@ -4,11 +4,26 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".views.MainActivity">
-    <TextView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/splash_screen_title"
-        android:textSize="40sp"
-        android:layout_centerInParent="true"/>
+
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anot"
+            android:textSize="40sp" />
+        <TextView
+            android:background="@drawable/logo_drawable"
+            android:id="@+id/logo2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ador"
+            android:textSize="40sp"
+            />
+    </LinearLayout>
+
 </RelativeLayout>

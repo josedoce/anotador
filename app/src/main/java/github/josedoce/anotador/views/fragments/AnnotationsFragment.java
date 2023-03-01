@@ -1,44 +1,29 @@
 package github.josedoce.anotador.views.fragments;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.adapter.AnnotationsAdapter;
-import github.josedoce.anotador.annotations.Senhador;
-import github.josedoce.anotador.context.AnotadorContext;
-import github.josedoce.anotador.database.DBAnnotations;
-import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.model.Annotation;
 import github.josedoce.anotador.service.AnnotationService;
+import github.josedoce.anotador.utils.PreferenceManager;
 import github.josedoce.anotador.views.HomeActivity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import static java.lang.String.format;
 import java.util.ArrayList;
@@ -54,17 +39,16 @@ public class AnnotationsFragment extends Fragment {
     private final List<Annotation> annotationListOriginalCopy = new ArrayList<>();
     private List<Annotation> annotationList;
     private AnnotationService annotationService;
-    private AnotadorContext anotadorContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        HomeActivity homeActivity = (HomeActivity) getActivity();
-        if(homeActivity != null){
-            anotadorContext = (AnotadorContext) homeActivity.getApplicationContext();
-        }
         annotationList = new ArrayList<>();
-        annotationService = new AnnotationService(getContext(), anotadorContext.getUser());
+        if(getActivity()!=null){
+            PreferenceManager pm = PreferenceManager.getInstance(this.getActivity().getApplicationContext());
+            String password = pm.getString("userpassword", null);
+            annotationService = new AnnotationService(this.getActivity(), password);
+        }
     }
 
     @SuppressLint({"DefaultLocale"})

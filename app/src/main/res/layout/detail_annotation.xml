@@ -84,6 +84,8 @@
         android:text="Descrição"
         android:textSize="19sp" />
     <ListView
+        android:clickable="false"
+        android:divider="@null"
         android:layout_below="@+id/tv_description"
         android:id="@+id/detailListView"
         android:layout_width="match_parent"

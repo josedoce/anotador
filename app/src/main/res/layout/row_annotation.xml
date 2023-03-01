@@ -26,17 +26,11 @@
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/tv_hour"
-            android:layout_centerInParent="true"
-            android:text="Data" />
-
-        <TextView
-            android:id="@+id/tv_hour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:text="Horas" />
+            android:textSize="11dp"
+            android:text="Data" />
+
 
     </RelativeLayout>
 

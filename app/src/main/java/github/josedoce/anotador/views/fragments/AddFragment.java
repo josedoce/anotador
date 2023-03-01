@@ -2,14 +2,10 @@ package github.josedoce.anotador.views.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -20,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -31,17 +26,12 @@ import java.util.Date;
 import java.util.List;
 
 import github.josedoce.anotador.R;
-import github.josedoce.anotador.annotations.Senhador;
-import github.josedoce.anotador.context.AnotadorContext;
-import github.josedoce.anotador.database.DBAnnotations;
-import github.josedoce.anotador.database.DBFields;
-import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.handler.DialogAddField;
 import github.josedoce.anotador.handler.DialogInfo;
-import github.josedoce.anotador.handler.DialogProgress;
 import github.josedoce.anotador.model.Annotation;
 import github.josedoce.anotador.model.Field;
 import github.josedoce.anotador.service.AnnotationService;
+import github.josedoce.anotador.utils.PreferenceManager;
 import github.josedoce.anotador.views.HomeActivity;
 
 public class AddFragment extends Fragment {
@@ -57,7 +47,6 @@ public class AddFragment extends Fragment {
     private Button
             bt_create,
             bt_cancel;
-    private AnotadorContext anotadorContext;
     private AnnotationService annotationService;
 
     @SuppressLint("SimpleDateFormat")
@@ -74,9 +63,10 @@ public class AddFragment extends Fragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         if(homeActivity != null){
             this.bottomNavigationView = homeActivity.getBottomNavigationView();
-            anotadorContext = (AnotadorContext) homeActivity.getApplicationContext();
+            PreferenceManager pm = PreferenceManager.getInstance(getActivity().getApplicationContext());
+            String password = pm.getString("userpassword", null);
+            annotationService = new AnnotationService(this.getActivity(), password);
         }
-        annotationService = new AnnotationService(this.getActivity(), anotadorContext.getUser());
     }
 
     @Nullable

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +29,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import github.josedoce.anotador.R;
+import github.josedoce.anotador.utils.PreferenceManager;
 import github.josedoce.anotador.views.fragments.AddFragment;
 import github.josedoce.anotador.views.fragments.AnnotationsFragment;
 import github.josedoce.anotador.views.fragments.SettingFragment;
@@ -40,6 +43,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.home_layout);
         fl_framelayout_home = findViewById(R.id.fl_framelayout_home);
         bnv_menu_home = findViewById(R.id.bnv_menu_home);
@@ -120,15 +125,12 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         }
-
-
         return super.dispatchTouchEvent(event);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
     }
 
     private void fragmentManager(Fragment fragment){

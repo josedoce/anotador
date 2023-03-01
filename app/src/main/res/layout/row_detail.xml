@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:gravity="center"
     android:id="@+id/ll_password"
     android:layout_marginTop="4dp"
@@ -8,24 +8,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <TextView
-        android:id="@+id/tv_field"
-        android:layout_width="0dp"
+        android:paddingTop="8dp"
+        android:id="@+id/tv_label_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="11"
-        android:background="@drawable/round_content_card"
-        android:padding="4dp"
-        android:text="Senha"
-        android:focusable="false"
-        android:inputType="textPassword"
-        android:textSize="18sp"
+        android:text="Titulo"
         />
-    <ImageButton
-        android:backgroundTint="#00000000"
-        android:id="@+id/bt_function"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_open_eye_24"
-        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@+id/bt_function"
+            android:id="@+id/tv_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_content_card"
+            android:padding="4dp"
+            android:text="Senha"
+            android:focusable="false"
+            android:inputType="textPassword"
+            android:textSize="18sp"
+            />
+        <ImageButton
+            android:layout_alignParentEnd="true"
+            android:backgroundTint="#00000000"
+            android:id="@+id/bt_function"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_open_eye_24"
+            />
+    </RelativeLayout>
 </LinearLayout>

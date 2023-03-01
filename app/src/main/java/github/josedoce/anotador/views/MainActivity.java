@@ -7,6 +7,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import java.util.concurrent.Executor;
@@ -21,12 +26,24 @@ import github.josedoce.anotador.tasks.TesteTask;
 public class MainActivity extends AppCompatActivity {
     private DBUser dbUser;
     private Handler handler = new Handler();
+    private View decorView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;;
+        decorView.setSystemUiVisibility(uiOptions);
         setContentView(R.layout.splash_screen_layout);
+        TextView logo = findViewById(R.id.logo);
+        TextView logo2 = findViewById(R.id.logo2);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.translate_logo_anim);
+        logo.setAnimation(animation);
+        Animation animation2 = AnimationUtils.loadAnimation(this, R.anim.translate_logo2_anim);
+        logo2.setAnimation(animation2);
+
           /*
         TextView textView = findViewById(R.id.logo);
         //setContentView(R.layout.detail_annotation);
@@ -63,11 +80,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             configureApp();
-
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             this.startActivity(intent);
 
             //this.startActivity(new Intent(this, DetailActivity.class));
-        }, 3000);
+        }, 4500);
 
 
     }

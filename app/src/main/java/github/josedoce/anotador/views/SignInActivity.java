@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -15,12 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import github.josedoce.anotador.R;
-import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.database.DBHelper;
 
 import github.josedoce.anotador.database.DBUser;
 import github.josedoce.anotador.handler.Alert;
 import github.josedoce.anotador.model.User;
+import github.josedoce.anotador.utils.PreferenceManager;
 
 public class SignInActivity extends AppCompatActivity {
     private final ViewHolder mViewHolder = new ViewHolder();
@@ -37,6 +39,8 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.signin_layout);
         mViewHolder.et_login = findViewById(R.id.et_login);
         mViewHolder.et_password = findViewById(R.id.et_password);
@@ -96,12 +100,12 @@ public class SignInActivity extends AppCompatActivity {
                 Alert.handler(alert, 10000);
                 return;
             }
-            AnotadorContext auth = (AnotadorContext) getApplicationContext();
-            auth.setUser(password);
+            PreferenceManager pm = PreferenceManager.getInstance(getApplicationContext());
+            pm.putString("username", user.getLogin());
+            pm.putString("userpassword", password);
             Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
             startActivity(intent);
             Toast.makeText(this, "Bem vindo "+user.getLogin(), Toast.LENGTH_LONG).show();
-
         }else{
             Alert alert = new Alert(mViewHolder.tv_info, "Usuário inválido ou inexistente.");
             Alert.handler(alert, 10000);

@@ -4,6 +4,8 @@ import static java.lang.String.format;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,12 +18,12 @@ import java.util.List;
 
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.adapter.DetailAdapter;
-import github.josedoce.anotador.context.AnotadorContext;
 import github.josedoce.anotador.handler.DialogDecision;
 import github.josedoce.anotador.model.Annotation;
 import github.josedoce.anotador.model.Field;
 import github.josedoce.anotador.service.AnnotationService;
 import github.josedoce.anotador.service.FieldService;
+import github.josedoce.anotador.utils.PreferenceManager;
 
 public class DetailActivity extends AppCompatActivity {
     private List<Field> fieldList;
@@ -35,17 +37,20 @@ public class DetailActivity extends AppCompatActivity {
             tv_date,
             tv_hour;
     private ListView recyclerView;
-    private AnotadorContext anotadorContext;
+
     private AnnotationService annotationService;
     private FieldService fieldService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.detail_annotation);
 
-        anotadorContext = (AnotadorContext) getApplicationContext();
-        annotationService = new AnnotationService(this, anotadorContext.getUser());
-        fieldService = new FieldService(this, anotadorContext.getUser());
+        PreferenceManager pm = PreferenceManager.getInstance(getApplicationContext());
+        String password = pm.getString("userpassword", null);
+        annotationService = new AnnotationService(this, password);
+        fieldService = new FieldService(this, password);
         fieldList = new ArrayList<>();
 
         tv_annotation = findViewById(R.id.tv_title);
@@ -104,13 +109,20 @@ public class DetailActivity extends AppCompatActivity {
         fieldList.clear();
         fieldList.addAll(fieldService.listAllFieldsRelatedTo(annotation));
         detailAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "Resumido.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ib_edite = null;
+        ib_delete = null;
+        tv_annotation = null;
+        tv_description = null;
+        tv_date = null;
+        tv_hour = null;
+        recyclerView = null;
         annotationService.destroy();
         fieldService.destroy();
+
     }
 }
