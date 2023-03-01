@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +22,7 @@ import java.util.concurrent.Executors;
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.database.DBUser;
+import github.josedoce.anotador.handler.DialogProgress;
 import github.josedoce.anotador.tasks.TesteTask;
 
 public class MainActivity extends AppCompatActivity {
@@ -82,11 +84,7 @@ public class MainActivity extends AppCompatActivity {
             configureApp();
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
             this.startActivity(intent);
-
-            //this.startActivity(new Intent(this, DetailActivity.class));
         }, 4500);
-
-
     }
 
     private void configureApp(){

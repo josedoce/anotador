@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,17 +20,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.database.DBHelper;
 import github.josedoce.anotador.database.DBUser;
 import github.josedoce.anotador.handler.Alert;
+import github.josedoce.anotador.handler.DialogInfo;
+import github.josedoce.anotador.handler.DialogProgress;
+import github.josedoce.anotador.tasks.TesteTask;
 import github.josedoce.anotador.utils.Dio;
 import github.josedoce.anotador.utils.PreferenceManager;
 
 public class SignUpActivity extends AppCompatActivity {
+    private ExecutorService executorService;
+    private Handler handler = new Handler();
     private static final int STORAGE_PERMISSION_CODE_TO_READ_AND_WRITE = 101;
-    private final ViewHolder mViewHolder = new ViewHolder();
+    private EditText et_login, et_password;
+    private TextView tv_info, tv_import;
+    private Button bt_doRegister;
     private Dio dio;
     private DBUser dbUser;
     private DBHelper db;
@@ -40,21 +51,21 @@ public class SignUpActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.signup_layout);
 
-        mViewHolder.et_login = findViewById(R.id.et_login);
-        mViewHolder.et_password = findViewById(R.id.et_password);
-        mViewHolder.tv_info = findViewById(R.id.tv_info);
-        mViewHolder.tv_import = findViewById(R.id.tv_import);
-        mViewHolder.bt_doRegister = findViewById(R.id.bt_doRegister);
+        et_login = findViewById(R.id.et_login);
+        et_password = findViewById(R.id.et_password);
+        tv_info = findViewById(R.id.tv_info);
+        tv_import = findViewById(R.id.tv_import);
+        bt_doRegister = findViewById(R.id.bt_doRegister);
 
         db = new DBHelper(this);
         dbUser = new DBUser(db);
         dio = new Dio(this);
 
-        mViewHolder.tv_import.setOnClickListener((view)->{
+        tv_import.setOnClickListener((view)->{
             checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
         });
 
-        mViewHolder.bt_doRegister.setOnClickListener((view)->{
+        bt_doRegister.setOnClickListener((view)->{
             doRegister();
         });
     }
@@ -78,8 +89,8 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void doRegister(){
-        String login = mViewHolder.et_login.getText().toString().trim();
-        String password = mViewHolder.et_password.getText().toString().trim();
+        String login = et_login.getText().toString().trim();
+        String password = et_password.getText().toString().trim();
         final boolean isLoginEmpty = login.isEmpty();
         final boolean isPasswordEmpty = password.isEmpty();
         if(isLoginEmpty || isPasswordEmpty){
@@ -91,37 +102,52 @@ public class SignUpActivity extends AppCompatActivity {
             if(isLoginEmpty && isPasswordEmpty)
                 alertMessage = "Os campos login e senha são necessários.";
 
-            Alert alert = new Alert(mViewHolder.tv_info, alertMessage);
-            Alert.handler(alert, 10000);
+            DialogInfo dialogInfo = new DialogInfo(this, "Campo vazio", alertMessage, DialogInfo.INFO);
+            dialogInfo.show();
             return;
         }
-        Cursor cursor = dbUser.selectByLogin(login);
-        cursor.moveToFirst();
-        if(cursor.getCount() == 0){
-            String hash = BCrypt.withDefaults()
-                    .hashToString(12, password.toCharArray());
-            long res = dbUser.create(login, hash);
-            if(res > 0){
-                Toast.makeText(this, "Registrado com sucesso!", Toast.LENGTH_LONG).show();
-                PreferenceManager pm = PreferenceManager.getInstance(getApplicationContext());
-                pm.putString("username", login);
-                pm.putString("userpassword", password);
-                Intent intent = new Intent(this, HomeActivity.class);
-                startActivity(intent);
-            }else{
-                Toast.makeText(this, "Não foi possivel registrar!", Toast.LENGTH_LONG).show();
+
+        DialogProgress dialogProgress = new DialogProgress(this);
+        TesteTask tt = new TesteTask();
+        tt.setOnStartedTask(()->handler.post(dialogProgress::show));
+        tt.setTaskBody(()->{
+            Cursor cursor = dbUser.selectByLogin(login);
+            cursor.moveToFirst();
+            if(cursor.getCount() == 0){
+                String hash = BCrypt.withDefaults()
+                        .hashToString(12, password.toCharArray());
+                long res = dbUser.create(login, hash);
+                if(res > 0){
+                    PreferenceManager pm = PreferenceManager.getInstance(getApplicationContext());
+                    pm.putString("username", login);
+                    pm.putString("userpassword", password);
+                    Intent intent = new Intent(this, HomeActivity.class);
+                    handler.post(()->{
+                        startActivity(intent);
+                        Toast.makeText(this, "Bem vindo "+login, Toast.LENGTH_LONG).show();
+                    });
+                }else{
+                    openDialog("Erro de entrada", "Não foi possivel registrar, tente de novo.");
+                }
+            }else {
+                openDialog("Erro de entrada", "Usuário já existente.");
             }
-        }else {
-            Alert alert = new Alert(mViewHolder.tv_info, "Ação impossivel.");
-            Alert.handler(alert, 10000);
-        }
+        });
+        tt.setOnFinishedTask(()->handler.post(dialogProgress::dismiss));
+        setTask(tt);
     }
 
-    public static class ViewHolder {
-        Button bt_doRegister;
-        EditText et_login;
-        EditText et_password;
-        TextView tv_info, tv_import;
+    private void setTask(TesteTask tt) {
+        executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(tt);
+        executorService.shutdown();
+    }
+
+    private void openDialog(String title, String message){
+        handler.post(()->{
+            DialogInfo dialogInfo = new DialogInfo(this, title, message, DialogInfo.INFO);
+            dialogInfo.show();
+        });
     }
 
     private void showDialogActions(){

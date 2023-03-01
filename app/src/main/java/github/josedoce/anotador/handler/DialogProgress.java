@@ -20,7 +20,6 @@ public class DialogProgress extends Dialog implements View.OnClickListener {
     public static final int ERROR = 1;
     public static final int SUCCESS = 2;
 
-    @SuppressLint("SetTextI18n")
     public DialogProgress(@NonNull Context context) {
         super(context);
         setContentView(R.layout.loading);

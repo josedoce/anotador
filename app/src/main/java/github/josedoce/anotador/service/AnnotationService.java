@@ -72,6 +72,8 @@ public class AnnotationService {
                 Senhador.createDecryptedModel(password, annotation);
                 annotationList.add(annotation);
             }while(cursor.moveToNext());
+        }else{
+            annotationList = new ArrayList<>();
         }
         return annotationList;
     }

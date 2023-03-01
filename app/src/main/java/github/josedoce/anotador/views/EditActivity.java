@@ -5,6 +5,8 @@ import static java.lang.String.format;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,37 +20,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import github.josedoce.anotador.R;
 import github.josedoce.anotador.adapter.EditAdapter;
 import github.josedoce.anotador.handler.DialogAddField;
 import github.josedoce.anotador.handler.DialogDecision;
 import github.josedoce.anotador.handler.DialogInfo;
+import github.josedoce.anotador.handler.DialogProgress;
 import github.josedoce.anotador.model.Annotation;
 import github.josedoce.anotador.model.Field;
 import github.josedoce.anotador.service.AnnotationService;
 import github.josedoce.anotador.service.FieldService;
+import github.josedoce.anotador.tasks.TesteTask;
 import github.josedoce.anotador.utils.PreferenceManager;
 
 public class EditActivity extends AppCompatActivity {
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler handler = new Handler();
     private List<Field> fieldList;
     private List<Integer> listToRemoveField;
     private Annotation annotation;
     private EditAdapter editAdapter;
     private Context context;
-    private TextView
-            tv_date,
-            tv_hour;
-    private EditText
-            et_annotation,
-            et_description;
-    private Button
-            button_modal,
-            bt_cancel,
-            bt_edit;
+    private TextView tv_date, tv_hour;
+    private EditText et_annotation, et_description;
+    private Button button_modal, bt_cancel, bt_edit;
     private ListView recyclerView;
     private AnnotationService annotationService;
     private FieldService fieldService;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,21 +135,34 @@ public class EditActivity extends AppCompatActivity {
 
             DialogDecision dialogDecision = new DialogDecision(this, "Aviso", "Deseja mesmo editar ?");
             dialogDecision.setOnAgree(() -> {
-                for(Field field : fieldList){
-                    if(field.getId() == -1){
-                        field.setId(null);
-                        fieldService.createField(field);
-                    } else {
-                        fieldService.updateField(field);
+                TesteTask tt = new TesteTask();
+                DialogProgress dialogProgress = new DialogProgress(this);
+                tt.setOnStartedTask(() -> {
+                    handler.post(dialogProgress::show);
+                });
+                tt.setTaskBody(() -> {
+                    for(Field field : fieldList){
+                        if(field.getId() == -1){
+                            field.setId(null);
+                            fieldService.createField(field);
+                        } else {
+                            fieldService.updateField(field);
+                        }
                     }
-                }
-                annotationService.updateAnnotation(annotation);
+                    annotationService.updateAnnotation(annotation);
 
-                //remove fields in db
-                for(Integer id : listToRemoveField){
-                    fieldService.deleteFieldBy(id);
-                }
-                goToDetailActivity();
+                    //remove fields in db
+                    for(Integer id : listToRemoveField){
+                        fieldService.deleteFieldBy(id);
+                    }
+                });
+                tt.setOnFinishedTask(() -> handler.post(()->{
+                    dialogProgress.dismiss();
+                    goToDetailActivity();
+                }));
+
+                executor.execute(tt);
+                executor.shutdown();
             });
             dialogDecision.show();
         });

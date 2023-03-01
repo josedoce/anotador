@@ -5,57 +5,50 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.TextView;
 
-public class TesteTask implements Runnable {
-    private OnFinishedTask onFinishedTask;
-    private UiUpdater uiUpdater;
-    private Context context;
-    private Handler mainHandler;
-    private TextView textView;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 
-    public TesteTask(Context context, TextView textView) {
-        this.textView = textView;
-        this.context = context;
-        mainHandler = new Handler(context.getMainLooper());
+public class TesteTask implements Runnable {
+    private OnStartedTask onStartedTask;
+    private TaskBody taskBody;
+    private OnFinishedTask onFinishedTask;
+
+    public interface OnStartedTask {
+        void onStarted();
+    }
+
+    public interface TaskBody {
+        void content();
     }
 
     public interface OnFinishedTask {
         void onFinished();
     }
+
+    public void setOnStartedTask(OnStartedTask onStartedTask){
+        this.onStartedTask = onStartedTask;
+    }
+
+    public void setTaskBody(TaskBody taskBody){
+        this.taskBody = taskBody;
+    }
+
     public void setOnFinishedTask(OnFinishedTask onFinishedTask) {
         this.onFinishedTask = onFinishedTask;
     }
 
-    public interface UiUpdater {
-        void runOnUiThread(Runnable runnable);
-    }
-
-    public void setUiUpdater(UiUpdater uiUpdater){
-        this.uiUpdater = uiUpdater;
-    }
-
     @Override
     public void run() {
-        for(int i = 0; i < 100; i++){
-            int finalI = i;
-            sleep(500);
-            mainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    textView.setText(String.format("Anotador - %d", finalI));
-                }
-            });
+        if(onStartedTask!=null){
+            onStartedTask.onStarted();
         }
-
-        mainHandler.post(()->this.onFinishedTask.onFinished());
-    }
-
-    private void sleep(int milis){
-        try {
-            Thread.sleep(milis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        taskBody.content();
+        if(onFinishedTask!=null){
+            onFinishedTask.onFinished();
         }
     }
+
 }
